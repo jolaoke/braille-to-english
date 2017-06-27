@@ -1,5 +1,20 @@
 import os
 
+def cleanString(name):
+    nameList = name.split(' ')
+    newList = []
+    for c in nameList:
+        if '#' in c:
+            c = c.replace('#', '')
+            for char in c:
+                if char not in '0 1 2 3 4 5 6 7 8 9':
+                    c = c.replace(char, '')
+        else:
+            c = c
+        newList.append(c)
+    newName = ' '.join(newList)
+    return newName
+
 # Braille to English dictionary
 conv = {
 '100000': 'A',
@@ -74,34 +89,28 @@ while run:
     print('')
     cell = row1 + row2 + row3
     phrase = phrase + cell + ' '
-# print(phrase)
 
 # Convert Braille to English
 phraseCharacters = phrase.split(' ')
 translatedPhrase = ['']
-num = False
+num = 'False'
+let = None
 for character in phraseCharacters:
     if conv[character] == '#':
         num = True
         for character in phraseCharacters[phraseCharacters.index(character):]:
             if numConv[character] != ' ' and num == True:
                 translatedPhrase.append(numConv[character])
-            else:
-                translatedPhrase.append(' ')
+            if numConv[character] == ' ':
+                translatedPhrase.append('')
                 num = False
-            if num == False:
-                break
-                
-                
-                
+                let = True
     else:
-        if num == False:
+        if num == 'False' or let == True:
             translatedPhrase.append(conv[character])
 
 # Say translation out loud
-if '#' in translatedPhrase:
-    translatedPhrase.remove('#')
 translation = ''.join(translatedPhrase)
-print(translation)
-os.system('say %s' %(translation))
-
+cleanTranslation = cleanString(translation)
+print(cleanTranslation)
+os.system('say %s' %(cleanTranslation))
